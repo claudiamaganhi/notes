@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F533C1B2419534B008B1F43 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F533C1A2419534B008B1F43 /* Note.swift */; };
 		0FB77BDA2416CA7D00137253 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FB77BD92416CA7D00137253 /* AppDelegate.swift */; };
 		0FB77BDC2416CA7D00137253 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FB77BDB2416CA7D00137253 /* SceneDelegate.swift */; };
 		0FB77BDE2416CA7D00137253 /* NotesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FB77BDD2416CA7D00137253 /* NotesViewController.swift */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0F533C1A2419534B008B1F43 /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
 		0FB77BD62416CA7D00137253 /* notes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = notes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FB77BD92416CA7D00137253 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0FB77BDB2416CA7D00137253 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -62,6 +64,7 @@
 			children = (
 				0FB77BD92416CA7D00137253 /* AppDelegate.swift */,
 				0FB77BDB2416CA7D00137253 /* SceneDelegate.swift */,
+				0F533C1A2419534B008B1F43 /* Note.swift */,
 				0FB77BDD2416CA7D00137253 /* NotesViewController.swift */,
 				0FB77BF02417C60000137253 /* DetailsViewController.swift */,
 				0FB77BDF2416CA7D00137253 /* Main.storyboard */,
@@ -149,6 +152,7 @@
 				0FB77BDC2416CA7D00137253 /* SceneDelegate.swift in Sources */,
 				0FB77BE42416CA7D00137253 /* notes.xcdatamodeld in Sources */,
 				0FB77BF12417C60000137253 /* DetailsViewController.swift in Sources */,
+				0F533C1B2419534B008B1F43 /* Note.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
