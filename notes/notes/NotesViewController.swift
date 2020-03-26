@@ -12,7 +12,7 @@ class NotesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.tableFooterView = UIView()
-        setTitle()
+        setTitle() 
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -22,9 +22,9 @@ class NotesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     @IBAction func newNote(_ sender: UIButton) {
         if let viewController = storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as? DetailsViewController {
-            viewController.newNote = { [weak self] note in
-                self?.notes.append(note)
-                self?.tableView.reloadData()
+            viewController.note = { [unowned self] note in
+                self.notes.append(note)
+                self.tableView.reloadData()
             }
             navigationController?.pushViewController(viewController, animated: true)
         }
@@ -45,11 +45,13 @@ class NotesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {        
         if let viewController = storyboard?.instantiateViewController(identifier: "DetailsViewController") as? DetailsViewController {
-            viewController.newNote = { [weak self] note in
-                self?.notes.append(note)
-                tableView.reloadData()
+            let note = notes[indexPath.row]
+            viewController.existingNote = note
+            
+            viewController.note = { [unowned self] note in
+                self.updateNote(note: note, indexpath: indexPath.row)
             }
             navigationController?.pushViewController(viewController, animated: true)
         }
@@ -77,6 +79,13 @@ class NotesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         navigationItem.largeTitleDisplayMode = .always
     }
     
+    private func updateNote(note: Note, indexpath: Int) {
+        notes.remove(at: indexpath)
+        if !note.text.isEmpty {
+            notes.append(note)
+        }
+        tableView.reloadData()
+    }
     
 }
 
