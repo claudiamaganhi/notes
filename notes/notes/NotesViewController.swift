@@ -22,9 +22,10 @@ class NotesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     @IBAction func newNote(_ sender: UIButton) {
         if let viewController = storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as? DetailsViewController {
-            viewController.note = { [unowned self] note in
-                self.notes.append(note)
-                self.tableView.reloadData()
+            viewController.note = { [unowned self] note, type in
+                self.updateNotesList(note: note, indexPath: 0, type: .newNote)
+//                self.notes.append(note)
+//                self.tableView.reloadData()
             }
             navigationController?.pushViewController(viewController, animated: true)
         }
@@ -50,8 +51,12 @@ class NotesViewController: UIViewController, UITableViewDelegate, UITableViewDat
             let note = notes[indexPath.row]
             viewController.existingNote = note
             
-            viewController.note = { [unowned self] note in
-                self.updateNote(note: note, indexpath: indexPath.row)
+            viewController.note = { [unowned self] note, type in
+                self.updateNotesList(note: note, indexPath: indexPath.row, type: type)
+//                if note.text == viewController.existingNote?.text {
+//                    self.removeNote(indexPath: indexPath.row)
+//                }
+//                self.updateNote(note: note, indexpath: indexPath.row)
             }
             navigationController?.pushViewController(viewController, animated: true)
         }
@@ -93,6 +98,31 @@ class NotesViewController: UIViewController, UITableViewDelegate, UITableViewDat
             notes.append(note)
         }
         tableView.reloadData()
+    }
+    
+    private func removeNote(indexPath: Int) {
+        self.notes.remove(at: indexPath)
+        self.tableView.reloadData()
+        return
+    }
+    
+    private func updateNotesList(note: Note, indexPath: Int, type: NoteType) {
+        
+        switch type {
+        case .deleteNote:
+            notes.remove(at: indexPath)
+            tableView.reloadData()
+            return
+        case .updateNote:
+             notes.remove(at: indexPath)
+             if !note.text.isEmpty {
+                notes.append(note)
+             }
+                tableView.reloadData()
+        case .newNote:
+            self.notes.append(note)
+            self.tableView.reloadData()
+        }
     }
     
 }
