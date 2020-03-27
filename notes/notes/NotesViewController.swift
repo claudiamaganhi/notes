@@ -57,6 +57,14 @@ class NotesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         }
     }
     
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle  == .delete {
+            notes.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            updateBottomNotes()
+        }
+    }
+    
     private func updateBottomNotes() {
         if notes.isEmpty {
             notesLabel.text = "0 Notas"

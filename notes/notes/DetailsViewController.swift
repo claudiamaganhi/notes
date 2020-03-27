@@ -3,7 +3,7 @@ import UIKit
 class DetailsViewController: UIViewController {
     
     @IBOutlet weak var dateLabel: UILabel!
-    @IBOutlet weak var textView: UITextView!
+    @IBOutlet weak var noteTextView: UITextView!
     
     
     var note: ((Note) -> Void)?
@@ -15,7 +15,7 @@ class DetailsViewController: UIViewController {
         super.viewDidLoad()
         setBarButtonItem()
         dateLabel.text = getDate(date: date)
-        textView.delegate = self
+        noteTextView.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -25,27 +25,38 @@ class DetailsViewController: UIViewController {
         loadNote(note: note)
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
+    
     @IBAction func deleteNote(_ sender: UIButton) {
         delete()
     }
     
     @IBAction func share(_ sender: UIButton) {
+        guard let note = noteTextView.text else { return }
+        let shareItem = [note]
+        let activityVC = UIActivityViewController(activityItems: shareItem, applicationActivities: nil)
+        present(activityVC, animated: true, completion: nil)
     }
     
     @IBAction func newNote(_ sender: UIButton) {
+        if !noteTextView.text.isEmpty {
+            save()
+            noteTextView.text = ""
+            dateLabel.text = getDate(date: date)
+        } else {
+            return
+        }
     }
     
     func setBarButtonItem() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(save))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done))
     }
     
-    @objc func save() {
-        let date = Date()
-        let newNote = Note(text: textView.text, date: date)
-        if !textView.text.isEmpty {
-            note?(newNote)
-        } else {
-            
+    @objc func done() {
+        if !noteTextView.text.isEmpty {
+            save()
         }
         navigationController?.popViewController(animated: true)
     }
@@ -61,8 +72,15 @@ class DetailsViewController: UIViewController {
     }
     
     func loadNote(note: Note) {
-        textView.text = note.text
+        noteTextView.text = note.text
         dateLabel.text = getDate(date: note.date)
+    }
+    
+    private func save() {
+        let date = Date()
+        let newNote = Note(text: noteTextView.text, date: date)
+        
+        note?(newNote)
     }
     
     private func delete() {
@@ -73,8 +91,16 @@ class DetailsViewController: UIViewController {
 
 extension DetailsViewController: UITextViewDelegate {
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        view.endEditing(true)
+    func textViewDidChange(_ textView: UITextView) {
+        noteTextView.sizeToFit()
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            textView.resignFirstResponder()
+            return false
+        }
+        return true
     }
     
 }

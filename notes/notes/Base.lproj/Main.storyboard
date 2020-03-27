@@ -203,7 +203,7 @@
                     </view>
                     <connections>
                         <outlet property="dateLabel" destination="m2L-pB-NOY" id="jRL-OM-UDB"/>
-                        <outlet property="textView" destination="9Me-aD-4Ho" id="eK4-2J-bBc"/>
+                        <outlet property="noteTextView" destination="9Me-aD-4Ho" id="eK4-2J-bBc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tb1-zY-HhX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
