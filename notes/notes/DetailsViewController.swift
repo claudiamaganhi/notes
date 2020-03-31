@@ -9,7 +9,7 @@ class DetailsViewController: UIViewController {
     var note: ((Note, NoteType) -> Void)?
     var date = Date()
     var existingNote: Note?
-    var type: NoteType = .updateNote
+    var type: NoteType = .newNote
 
     
     override func viewDidLoad() {

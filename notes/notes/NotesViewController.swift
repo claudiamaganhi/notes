@@ -8,9 +8,12 @@ class NotesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     @IBOutlet weak var notesLabel: UILabel!
     
     var notes = [Note]()
+    var filteredNotes: [Note] = []
+    var searching: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        searchBar.delegate = self
         tableView.tableFooterView = UIView()
         setTitle() 
     }
@@ -24,23 +27,26 @@ class NotesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         if let viewController = storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as? DetailsViewController {
             viewController.note = { [unowned self] note, type in
                 self.updateNotesList(note: note, indexPath: 0, type: .newNote)
-//                self.notes.append(note)
-//                self.tableView.reloadData()
             }
             navigationController?.pushViewController(viewController, animated: true)
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return notes.count
+        return searching ? filteredNotes.count : notes.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.selectionStyle = .none
-        
         let note = notes[indexPath.row]
-        cell.textLabel?.text = note.text
+        
+        if searching {
+            let filteredNote = filteredNotes[indexPath.row]
+            cell.textLabel?.text = filteredNote.text
+        } else {
+            cell.textLabel?.text = note.text
+        }
         cell.detailTextLabel?.text = getFormattedDate(date: note.date)
         
         return cell
@@ -48,26 +54,37 @@ class NotesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {        
         if let viewController = storyboard?.instantiateViewController(identifier: "DetailsViewController") as? DetailsViewController {
-            let note = notes[indexPath.row]
-            viewController.existingNote = note
+            
+            if searching {
+                let filteredNote = filteredNotes[indexPath.row]
+                viewController.existingNote = filteredNote
+            } else {
+                let note = notes[indexPath.row]
+                viewController.existingNote = note
+            }
             
             viewController.note = { [unowned self] note, type in
                 self.updateNotesList(note: note, indexPath: indexPath.row, type: type)
-//                if note.text == viewController.existingNote?.text {
-//                    self.removeNote(indexPath: indexPath.row)
-//                }
-//                self.updateNote(note: note, indexpath: indexPath.row)
             }
             navigationController?.pushViewController(viewController, animated: true)
         }
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        
         if editingStyle  == .delete {
-            notes.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .automatic)
-            updateBottomNotes()
+            if searching {
+                return
+            } else {
+                notes.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+                updateBottomNotes()
+            }
         }
+    }
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return searching ? UITableViewCell.EditingStyle.none : UITableViewCell.EditingStyle.delete
     }
     
     private func updateBottomNotes() {
@@ -92,43 +109,38 @@ class NotesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         navigationItem.largeTitleDisplayMode = .always
     }
     
-    private func updateNote(note: Note, indexpath: Int) {
-        notes.remove(at: indexpath)
-        if !note.text.isEmpty {
-            notes.append(note)
-        }
-        tableView.reloadData()
-    }
-    
-    private func removeNote(indexPath: Int) {
-        self.notes.remove(at: indexPath)
-        self.tableView.reloadData()
-        return
-    }
-    
     private func updateNotesList(note: Note, indexPath: Int, type: NoteType) {
-        
         switch type {
         case .deleteNote:
             notes.remove(at: indexPath)
-            tableView.reloadData()
-            return
         case .updateNote:
-             notes.remove(at: indexPath)
-             if !note.text.isEmpty {
-                notes.append(note)
-             }
-                tableView.reloadData()
+            notes.remove(at: indexPath)
+            if !note.text.isEmpty {
+                notes.insert(note, at: 0)
+            }
         case .newNote:
-            self.notes.append(note)
-            self.tableView.reloadData()
+            notes.insert(note, at: 0)
         }
+        tableView.reloadData()
     }
     
 }
 
 extension NotesViewController: UISearchBarDelegate {
     
+     func searchBar(_ searchBar: UISearchBar, textDidChange searchText:String) {
+        filteredNotes = notes.filter({ $0.text.prefix(searchText.count).lowercased() == searchText.lowercased()})
+        searching = true
+        tableView.reloadData()
+    }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        searchBar.endEditing(true)
+        searching = false
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
+        searching = false
+    }
 }
-
-
