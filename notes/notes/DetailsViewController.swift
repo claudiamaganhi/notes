@@ -26,6 +26,11 @@ class DetailsViewController: UIViewController {
         loadNote(note: note)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        noteTextView.becomeFirstResponder()
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
